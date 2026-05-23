@@ -2,6 +2,8 @@
 
 Aplicación de escritorio para uso local del agente AI Gemma, refactorizada desde la extensión de navegador original.
 
+**Nota:** Esta aplicación ahora utiliza la librería `@gemma-gem/core` como dependencia principal.
+
 ## Requisitos
 
 - Node.js 18+
@@ -31,14 +33,15 @@ pnpm electron:build
 
 ## Arquitectura
 
-La aplicación desktop mantiene el núcleo del agente original pero adaptado para Electron:
+La aplicación desktop utiliza la librería `@gemma-gem/core` para el núcleo del agente:
 
 ```
 ┌─────────────────────────────────────────┐
 │           Renderer Process              │
 │  ┌─────────────┐  ┌──────────────────┐ │
-│  │   React UI  │  │  DesktopAgent    │ │
-│  │             │  │  + GemmaModelHost│ │
+│  │   React UI  │  │  @gemma-gem/core │ │
+│  │             │  │  - GemmaAgent    │ │
+│  │             │  │  - GemmaModelHost│ │
 │  └─────────────┘  └──────────────────┘ │
 │         │                  │            │
 │         └────────┬─────────┘            │
@@ -52,13 +55,46 @@ La aplicación desktop mantiene el núcleo del agente original pero adaptado par
 └─────────────────────────────────────────┘
 ```
 
-## Componentes Refactorizados
+## Uso de @gemma-gem/core
 
-### Núcleo del Agente (`src/lib/`)
+```typescript
+import { GemmaAgent, GemmaModelHost } from '@gemma-gem/core'
+import { createFileSystemTools, createShellTools } from '@gemma-gem/core/tools'
 
-- **`model-host.ts`**: Adaptación del host del modelo para entorno desktop, usando WebGPU directamente en el renderer process
-- **`desktop-agent.ts`**: Orquestador del agente que integra el modelo con herramientas de escritorio
-- **`tools.ts`**: Herramientas específicas para desktop (lectura/escritura de archivos, ejecución de comandos, etc.)
+// Crear host del modelo
+const modelHost = new GemmaModelHost({
+  onStatus: (status, progress) => console.log(status, progress)
+})
+
+// Cargar modelo
+await modelHost.load('gemma-4-e2b-it')
+
+// Crear herramientas
+const fsTools = createFileSystemTools({
+  readFile: fs.readFile,
+  writeFile: fs.writeFile,
+  listDirectory: fs.readdir
+})
+
+const shellTools = createShellTools({
+  runCommand: execAsync
+})
+
+// Crear agente
+const agent = new GemmaAgent({
+  model: modelHost,
+  tools: [...Object.values(fsTools), ...Object.values(shellTools)],
+  systemPrompt: 'Eres un asistente de programación útil.'
+})
+
+// Ejecutar conversación
+await agent.run('Lista los archivos en el directorio actual', {
+  onChunk: (text) => console.log(text),
+  onToolCall: (call) => console.log('Tool:', call.name)
+})
+```
+
+## Componentes
 
 ### Interfaz (`src/`)
 
