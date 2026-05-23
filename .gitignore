@@ -1,26 +1,34 @@
-# Logs
-logs
+```
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.js
+*.ts
+*.tsx
+*.css
+
+# Logs and temp files
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+*.tmp
 
-node_modules
-.output
-stats.html
-stats-*.json
-.wxt
-web-ext.config.ts
+# Environment
+.env
+.env.local
+*.env.*
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Editors
+.vscode/
+.idea/
+
+# OS generated files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# TypeScript/JavaScript specific
+*.map
+coverage/
+.nyc_output/
+```
