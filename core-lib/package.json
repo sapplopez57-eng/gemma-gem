@@ -1,0 +1,57 @@
+{
+  "name": "@gemma-gem/core",
+  "version": "1.0.0",
+  "description": "Gemma Gem core agent library for local AI inference with tool execution",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./agent": {
+      "import": "./dist/agent.js",
+      "types": "./dist/agent.d.ts"
+    },
+    "./model": {
+      "import": "./dist/model.js",
+      "types": "./dist/model.d.ts"
+    },
+    "./tools": {
+      "import": "./dist/tools.js",
+      "types": "./dist/tools.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.1.0",
+    "@kessler/gemma-agent": "^1.0.0",
+    "onnxruntime-node": "^1.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "gemma",
+    "ai",
+    "agent",
+    "local-inference",
+    "webgpu",
+    "onnx",
+    "llm"
+  ]
+}
